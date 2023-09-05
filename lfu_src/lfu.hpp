@@ -55,12 +55,11 @@ public:
         return 0;
     }
 
-    void print() 
+    void print() const
     {
-        for (auto node = cache_.begin(); node != cache_.end(); ++node)
+        for (const auto node : cache_)
         {   
-            const auto freq = hash[(*node)].first;
-            std::cout << *node << '(' << freq << ')' << ' ';
+            std::cout << node << '(' << hash.at(node).first << ')' << ' ';
         }
         std::cout << "\n";
     }
