@@ -20,7 +20,6 @@ int main()
     {
         int page = 0;
         std::cin >> page;
-        assert(std::cin.good() && "Input error");
         hits += cache.update(page);
         #ifdef DEBUG
             cache.print();

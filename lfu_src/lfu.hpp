@@ -22,7 +22,7 @@ public:
         return (cache_.size() == size);
     }
 
-    int update(T& page)
+    int update(const T& page)
     {
         if(hash.contains(page))
         {
@@ -40,6 +40,7 @@ public:
             }
 
             cache_.erase(min_freq_node);
+            hash.erase(*min_freq_node);
             cache_.push_back(page);
             hash[page].first = 1;
             auto it = cache_.end();
