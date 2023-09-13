@@ -22,7 +22,8 @@ int main()
         std::cin >> page;
         hits += cache.update(page);
         #ifdef DEBUG
-            cache.print();
+            std::cout << "Current page: " << page << ' ';
+            cache.print_cache();
         #endif
     }
 

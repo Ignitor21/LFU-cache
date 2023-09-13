@@ -3,67 +3,55 @@
 #include <list>
 #include <unordered_map>
 #include <iterator>
+#include <map>
 
 template <typename T> class cache_t
 {
 private:
-    size_t size = 0;
-    std::list<T> cache_;
-    using ListIt = typename std::list<T>::iterator;
-    std::unordered_map<T, std::pair<int, ListIt>> hash; // pairs of frequency and iterator to list node
+    size_t size_ = 0;
+    using FreqIt = typename std::multimap<size_t, T>::iterator;
+    std::unordered_map<T, FreqIt> hash_; // hash table of nodes and it's list iterators
+    std::multimap<size_t, T> freq_; // contains frequencies and nodes that have the same frequency
 public:
-    cache_t(size_t size_)
+    cache_t(size_t size)
     {
-        size = size_;
+        size_ = size;   
     }
 
     bool full() const
     {
-        return (cache_.size() == size);
+        return (hash_.size() == size_);
     }
 
-    int update(const T& page)
+    bool update(const T& page)
     {
-        if(hash.contains(page))
-        {
-            ++hash[page].first;
-            return 1;
-        }
+        auto node = hash_.find(page);
 
-        if (full())
+        if (node == hash_.end())
         {
-            auto min_freq_node = cache_.begin();
-            for (auto node = cache_.begin(); node != cache_.end(); ++node)
+            if (full())
             {
-                if (hash[*node].first < hash[*min_freq_node].first)
-                    min_freq_node = node;
+                T delete_node = freq_.begin()->second;
+                hash_.erase(delete_node);
+                freq_.erase(freq_.begin());
             }
 
-            cache_.erase(min_freq_node);
-            hash.erase(*min_freq_node);
-            cache_.push_back(page);
-            hash[page].first = 1;
-            auto it = cache_.end();
-            hash[page].second = --it;
-            return 0;
+            hash_[page] = freq_.insert({1, page});
+            return false;
         }
 
-        
-        cache_.push_back(page);
-        hash[page].first = 1;
-        auto it = cache_.end();
-        hash[page].second = --it;
-        return 0;
+        size_t cur_node_freq = node->second->first;
+        freq_.erase(node->second);
+        hash_[page] = freq_.insert({cur_node_freq + 1, page});
+        return true;
     }
-
-    void print() const
+  
+    void print_cache() const
     {
-        for (const auto node : cache_)
+        for (const auto& [node, it] : hash_)
         {   
-            std::cout << node << '(' << hash.at(node).first << ')' << ' ';
+            std::cout << node << '(' << it->first << ')' << ' ';
         }
         std::cout << "\n";
     }
-
 };
-
