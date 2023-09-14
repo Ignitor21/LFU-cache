@@ -1,5 +1,5 @@
 CC=g++
-CFLAGS=-c -Wall -O2
+CFLAGS= -c -Wall -O2
 DEBUGFLAG=-c -Wall -O0 -g -D DEBUG
 
 all: build_lfu execute clean
@@ -25,7 +25,7 @@ build_perfect: perfect.o
 perfect.o: perfect_src/perfect.cpp
 	$(CC) $(CFLAGS) perfect_src/perfect.cpp -o perfect.o
 
-test: build_lfu clean
+test: build_lfu build_perfect clean
 	 ./tests/bash.sh
 
 clean:

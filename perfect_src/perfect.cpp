@@ -16,13 +16,16 @@ int main()
 
     Perfect_cache<int> cache(cache_size);
     cache.get_requests(request_number);
+    cache.hash_entry();
     int hits = 0;
 
     for (int i = 0; i < request_number; ++i)
     {
         hits += cache.update(i);
         #ifdef DEBUG
-            cache.print();
+            cache.print_nodes();
+            cache.print_index();
+            std::cout << "\n";
         #endif
     }
 

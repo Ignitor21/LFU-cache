@@ -11,7 +11,7 @@ for file in tests/*.in; do
     printf "%s\n" $file
     printf "LFU cache hits: "
     ./lfu < $file
-    # printf "Perfect cache hits: "
-    # ./perfect < $file
+    printf "Perfect cache hits: "
+    ./perfect < $file
     printf "\n" 
 done

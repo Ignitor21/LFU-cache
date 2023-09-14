@@ -1,108 +1,114 @@
 #pragma once
 
-#include <list>
+#include <map>
 #include <unordered_map>
 #include <iterator>
+#include <set>
+#include <vector>
+#include <cassert>
 
 template <typename T> class Perfect_cache
 {
 private:
-    std::list<T> cache_;
-    size_t size = 0;
-    using ListIt = typename std::list<T>::iterator;
-    std::vector<T> requests;
-    std::unordered_map<T, std::pair<ListIt, size_t>> hash; //Pair of list iterator to key in list and distance between current page and her next entry
-    size_t requests_size = 0;
+    size_t size_ = 0;
+    using HashIt = typename std::set<T>::iterator;
+    std::vector<T> requests_;
+    std::set<T> hash_; 
+    std::unordered_multimap<T, size_t> entry_;
+    std::map<size_t, HashIt, std::greater<size_t>> index_map_;
 public:
-    Perfect_cache(size_t size_)
+    Perfect_cache(size_t size)
     {
-        size = size_;
+        size_ = size;
     }
 
     bool full() const
     {
-        return (cache_.size() == size);
+        return (hash_.size() == size_);
     }
 
     void get_requests(int n) // writing pages in the vector of requests
     {
-        requests.reserve(n);
+        requests_.reserve(n);
         for (int i = 0; i < n; ++i)
         {
-            std::cin >> requests[i];
+            T tmp;
+            std::cin >> tmp;
+            requests_.push_back(tmp);
         }
-        requests_size = n;
     }
 
-    int dist(size_t index) const // return distance between requests[index] value and its next entry
+    void hash_entry()
     {
-        T find_value = requests[index];
-
-        for(size_t i = index + 1; i < requests_size; ++i)
-        {
-            if (requests[i] == find_value)
-                return (i - index);
-        }
-
-        return requests_size;
+        for (size_t i = requests_.size() - 1; i != 0; --i)
+            entry_.insert({requests_[i], i});
+        entry_.insert({requests_[0], 0});
     }
 
-    void decrement_dist() // decrements all distances by 1
+    bool update(size_t index) // cache updating
     {
-        for (auto &[key, value]: hash)
+        assert(hash_.size() == index_map_.size());
+        T page = requests_[index];
+        #ifdef DEBUG
+            std::cout << "Cur page: " << page << "\n";
+        #endif
+        auto hit = hash_.find(page);
+
+        if (hit == hash_.end())
         {
-            if (value.second != requests_size)
-                --(value.second);
-        }   
-    }
+            entry_.erase(entry_.find(page));
+            auto next_entry_it = entry_.find(page);
 
-    int update(int index) // cache updating
-    {
-        T page = requests[index];
-        decrement_dist();
-
-        if (hash.contains(page))
-        {
-            hash[page].second = dist(index);
-            return 1;
-        }
-
-        if (full())
-        {
-            size_t max_dist = 0;
-            ListIt delete_node;
-
-            for (const auto &[key, value]: hash)
+            if (next_entry_it == entry_.end())
             {
-                if (value.second > max_dist)
-                {
-                    delete_node = value.first;
-                    max_dist = value.second;
-                }
+                return false;
             }
 
-            cache_.erase(delete_node);
-            hash.erase(*delete_node);
-            cache_.push_back(page);
-            ListIt end = cache_.end();
-            hash[page].first = --end;
-            hash[page].second = dist(index);  
-            return 0;  
+            if (full())
+            {
+                auto max_freq_node_it = index_map_.begin();
+                hash_.erase((*max_freq_node_it).second);
+                index_map_.erase(max_freq_node_it);
+            }
+            size_t tmp = (*next_entry_it).second;
+            index_map_[tmp] = (hash_.insert(page)).first;
+            return false;
+        }
+        
+        entry_.erase(entry_.find(page));
+        auto next_entry_it = entry_.find(page);
+
+        if (next_entry_it == entry_.end())
+        {
+            hash_.erase(page);
+            index_map_.erase(index_map_.find(index));
+        }
+        else
+        {
+            index_map_.erase(index);
+            index_map_[next_entry_it->second] = hash_.find(page);
         }
 
-        cache_.push_back(page);
-        ListIt end = cache_.end();
-        hash[page].first = --end;
-        hash[page].second = dist(index);
-        return 0;
+        return true;
     }
     
-    void print() const //prints out cache with distant to the next entry of every node
+    void print_nodes() const 
     {
-        for (const auto node : cache_)
+        for (const auto& node : hash_)
         {   
-            std::cout << node << '(' << hash.at(node).second << ')' << ' ';
+            std::cout << node << ' ';
         }
         std::cout << "\n";
     }
+
+    void print_index() const 
+    {
+        std::cout << "Index list: ";
+        for (const auto& [freq, it] : index_map_)
+        {   
+            std::cout << freq << ' ';
+        }
+        std::cout << "\n";
+    }
+
 };
