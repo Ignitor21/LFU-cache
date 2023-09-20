@@ -1,6 +1,7 @@
 #include <iostream>
 #include <cassert>
 #include <vector>
+#include <limits>
 #include "perfect.hpp"
 
 int main()
@@ -8,9 +9,11 @@ int main()
     int cache_size = 0, request_number = 0;
     std::cin >> cache_size >> request_number;
     
-    while (cache_size < 0 || request_number < 0)
+    while (!std::cin.good() || cache_size <= 0 || request_number <= 0)
     {
-        std::cerr << "Negative cache size or number of request. Enter valid data:\n";
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); 
+        std::cerr << "Incorrect input. Enter valid data:\n";
         std::cin >> cache_size >> request_number;   
     }
 
@@ -30,4 +33,5 @@ int main()
     }
 
     std::cout << hits << "\n";
+    return 0;
 }

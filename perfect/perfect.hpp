@@ -10,7 +10,7 @@
 template <typename T> class Perfect_cache
 {
 private:
-    size_t size_ = 0;
+    size_t size_;
     using HashIt = typename std::set<T>::iterator;
     std::vector<T> requests_;
     std::set<T> hash_; 
@@ -41,24 +41,27 @@ public:
     void hash_entry()
     {
         for (size_t i = requests_.size() - 1; i != 0; --i)
-            entry_.insert({requests_[i], i});
-        entry_.insert({requests_[0], 0});
+            entry_.emplace(requests_[i], i);
+        entry_.emplace(requests_[0], 0);
     }
 
     bool update(size_t index) // cache updating
     {
         assert(hash_.size() == index_map_.size());
+        assert(index <  requests_.size());
+        
         T page = requests_[index];
         #ifdef DEBUG
             std::cout << "Cur page: " << page << "\n";
         #endif
         auto hit = hash_.find(page);
 
+
+        entry_.erase(entry_.find(page));
+        auto next_entry_it = entry_.find(page);
+
         if (hit == hash_.end())
         {
-            entry_.erase(entry_.find(page));
-            auto next_entry_it = entry_.find(page);
-
             if (next_entry_it == entry_.end())
             {
                 return false;
@@ -71,12 +74,9 @@ public:
                 index_map_.erase(max_freq_node_it);
             }
             size_t tmp = (*next_entry_it).second;
-            index_map_[tmp] = (hash_.insert(page)).first;
+            index_map_[tmp] = (hash_.emplace(page)).first;
             return false;
         }
-        
-        entry_.erase(entry_.find(page));
-        auto next_entry_it = entry_.find(page);
 
         if (next_entry_it == entry_.end())
         {

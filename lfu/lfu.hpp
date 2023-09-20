@@ -7,7 +7,7 @@
 template <typename T> class cache_t
 {
 private:
-    size_t size_ = 0;
+    size_t size_;
     using FreqIt = typename std::multimap<size_t, T>::iterator;
     std::unordered_map<T, FreqIt> hash_; // hash table of nodes and it's list iterators
     std::multimap<size_t, T> freq_; // contains frequencies and nodes that have the same frequency
@@ -35,13 +35,13 @@ public:
                 freq_.erase(freq_.begin());
             }
 
-            hash_[page] = freq_.insert({1, page});
+            hash_[page] = freq_.emplace(1, page);
             return false;
         }
 
         size_t cur_node_freq = node->second->first;
         freq_.erase(node->second);
-        hash_[page] = freq_.insert({cur_node_freq + 1, page});
+        hash_[page] = freq_.emplace(cur_node_freq + 1, page);
         return true;
     }
   

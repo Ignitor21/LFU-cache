@@ -1,8 +1,6 @@
 .vscode
 .gitignore
-lfu
-lfu_debug
-perfect
+build
 
 # Prerequisites
 *.d

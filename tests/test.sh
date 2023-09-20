@@ -7,11 +7,11 @@ BLUE='\033[0;34m'
 
 echo -e "${GREEN}Testing has started!${NC}"
 echo
-for file in tests/*.in; do
+for file in ./*.in; do
     printf "%s\n" $file
     printf "LFU cache hits: "
-    ./lfu < $file
+    ../build/lfu_src/lfu < $file
     printf "Perfect cache hits: "
-    ./perfect < $file
+    ../build/perfect_src/perfect < $file
     printf "\n" 
 done
