@@ -1,12 +1,28 @@
-# LFU-cache
+# Least Frequently Used (LFU) cache
 
-To run this project on your computer write these commands in your console:
+## Description
+This is 
 
-1. `git clone git@github.com:Ignitor21/LFU-cache.git`
-2. `cd LFU-cache`
-3. `cmake -B build`
-4. `cd build/[cache_name]` (`[cache_name]` is lfu or perfect)
-5. `cmake --build .` to compile cache
+## Installing project:
+1. Clone this repository to your computer:
+```
+    git clone git@github.com:Ignitor21/LFU-cache.git
+    cd LFU-cache
+```
+2. Run cmake
+```
+    cmake -B build
+    cd build/[cache_name] 
+    cmake --build .
+```
 
+[cache_name] is `lfu` or `perfect`
 
-To start testing move to `tests` directory and run `test.sh`
+3. ./[cache_name]
+
+## Tests
+To start testing move to `tests` directory and run:
+
+ ```
+./test.sh
+```
