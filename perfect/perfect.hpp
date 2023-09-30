@@ -17,10 +17,7 @@ private:
     std::unordered_multimap<T, size_t> entry_;
     std::map<size_t, HashIt, std::greater<size_t>> index_map_;
 public:
-    Perfect_cache(size_t size)
-    {
-        size_ = size;
-    }
+    Perfect_cache(size_t size) : size_(size){}
 
     bool full() const
     {

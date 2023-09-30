@@ -1,8 +1,5 @@
 # Least Frequently Used (LFU) cache
 
-## Description
-This is 
-
 ## Installing project:
 1. Clone this repository to your computer:
 ```

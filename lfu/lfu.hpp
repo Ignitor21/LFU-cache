@@ -12,10 +12,7 @@ private:
     std::unordered_map<T, FreqIt> hash_; // hash table of nodes and it's list iterators
     std::multimap<size_t, T> freq_; // contains frequencies and nodes that have the same frequency
 public:
-    cache_t(size_t size)
-    {
-        size_ = size;   
-    }
+    cache_t(size_t size) : size_(size) {}
 
     bool full() const
     {
