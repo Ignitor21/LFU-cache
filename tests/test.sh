@@ -10,8 +10,8 @@ echo
 for file in ./*.in; do
     printf "%s\n" $file
     printf "LFU cache hits: "
-    ../build/lfu_src/lfu < $file
+    ../build/lfu/lfu < $file
     printf "Perfect cache hits: "
-    ../build/perfect_src/perfect < $file
+    ../build/perfect/perfect < $file
     printf "\n" 
 done
